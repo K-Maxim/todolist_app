@@ -9,7 +9,7 @@
 ## Project launch
 1. Create virtual environment
 2. Install dependencies from requirements.txt:
-- pip install -r todolist/requirements.txt
+- pip install -r requirements.txt
 3. install dependencies from .env file:
 - install your variables or can copy the default variables from todolist/.env.example
 4. roll up migrations:
