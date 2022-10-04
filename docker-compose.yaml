@@ -2,7 +2,47 @@ version: '3.9'
 
 services:
 
-  posrgres:
+  front:
+    image: sermalenk/skypro-front:lesson-34
+    ports:
+      - "8080:80"
+    depends_on:
+    - postgres
+    - api
+    networks:
+    - todolist_front_networks
+
+
+  api:
+    build:
+      context: .
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.docker_env:/code/.env.example
+    networks:
+        - todolist_front_networks
+        - db_todolist
+
+  migrations:
+    build:
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./.docker_env:/code/.env.example
+    networks:
+      - db_todolist
+    command: sh -c "python manage.py migrate"
+
+
+  postgres:
     image: postgres:13.0-alpine
     restart: always
     env_file:
@@ -17,11 +57,12 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - backend
+      - db_todolist
 
 volumes:
   pg_data_todolist:
 
 networks:
-  backend:
+  db_todolist:
     driver: bridge
+  todolist_front_networks:
