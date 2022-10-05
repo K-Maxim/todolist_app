@@ -10,7 +10,7 @@ services:
     - postgres
     - api
     networks:
-    - todolist_front_networks
+    - todolist
 
 
   api:
@@ -23,11 +23,10 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
-    volumes:
-      - ./.docker_env:/code/.env.example
+    env_file:
+      - .env.example
     networks:
-        - todolist_front_networks
-        - db_todolist
+        - todolist
 
   migrations:
     build:
@@ -35,11 +34,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./.docker_env:/code/.env.example
+    env_file:
+      - .env.example
     networks:
-      - db_todolist
-    command: sh -c "python manage.py migrate"
+      - todolist
+    command: python ./manage.py migrate
 
 
   postgres:
@@ -48,21 +47,21 @@ services:
     env_file:
       - .env.example
     volumes:
-      - pg_data_todolist:/var/lib/postgres/data
+      - pg_data_todolist:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready -U postgres
+      test: [ "CMD-SHELL", "pg_isready -U admin -d todolist_db" ]
       interval: 5s
       timeout: 3s
       retries: 5
     ports:
       - "5432:5432"
     networks:
-      - db_todolist
+      - todolist
 
 volumes:
   pg_data_todolist:
 
 networks:
-  db_todolist:
+  todolist:
     driver: bridge
-  todolist_front_networks:
+
