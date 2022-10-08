@@ -15,7 +15,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push
-    env_file:
+    env:
       - .env.example
     steps:
       - name: clone code
