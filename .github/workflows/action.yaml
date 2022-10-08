@@ -1,0 +1,10 @@
+name: Build adnd deploy
+on: [push]
+jobs:
+  build_and_push:
+    rubs-on: ubuntu-latest
+    steps:
+      - name: code clone
+        uses: actions/checkout@v2
+      - name: docker build
+        run: docker build -t mkaprenko/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID .
