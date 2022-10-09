@@ -33,7 +33,7 @@ services:
       postgres:
         condition: service_healthy
     env_file:
-      - deploy/.env_example
+      - .env_example
     networks:
       - todolist
     command: python ./manage.py migrate
@@ -43,7 +43,7 @@ services:
     image: postgres:13.0-alpine
     restart: always
     env_file:
-      - deploy/.env_example
+      - .env_example
     volumes:
       - pg_data_todolist:/var/lib/postgresql/data
     healthcheck:
