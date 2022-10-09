@@ -32,8 +32,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    env_file:
-      - .env.example
+    volumes:
+      - ./.env:/code/.env
     networks:
       - todolist
     command: python ./manage.py migrate
