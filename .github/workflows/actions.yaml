@@ -26,10 +26,9 @@ jobs:
       DB_PORT: ${{ secrets.DB_PORT }}
     steps:
       - name: clone code
-        uses: action/checkout@v2
+        uses: actions/checkout@v2
       - name: render configs
         run: |
-#          mkdir deploy
           cat docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
           cat .env.example | envsubst > deploy/.env
       - name: copy files to server
