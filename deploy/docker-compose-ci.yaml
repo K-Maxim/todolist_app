@@ -16,10 +16,10 @@ services:
   api:
     image: mkaprenko/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     depends_on:
-      migrations:
-        condition: service_completed_successfully
       postgres:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
     ports:
       - "8000:8000"
     env_file:
