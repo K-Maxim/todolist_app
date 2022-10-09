@@ -15,7 +15,7 @@ services:
 
   api:
     build:
-      context: .
+      context: ..
     depends_on:
       migrations:
         condition: service_completed_successfully
@@ -28,12 +28,12 @@ services:
 
   migrations:
     build:
-      context: .
+      context: ..
     depends_on:
       postgres:
         condition: service_healthy
     env_file:
-      - ./.env.example
+      - ./.env_example
     networks:
       - todolist
     command: python ./manage.py migrate
@@ -43,7 +43,7 @@ services:
     image: postgres:13.0-alpine
     restart: always
     env_file:
-      - ./.env.example
+      - ./.env_example
     volumes:
       - pg_data_todolist:/var/lib/postgresql/data
     healthcheck:
