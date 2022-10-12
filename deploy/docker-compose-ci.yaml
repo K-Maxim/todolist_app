@@ -20,8 +20,6 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-    ports:
-      - "8000:8000"
     volumes:
       - ./.docker_env:/code/.env_example
     networks:
@@ -51,8 +49,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-    ports:
-      - "5432:5432"
     networks:
       - todolist
 
