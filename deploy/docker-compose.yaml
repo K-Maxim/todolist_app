@@ -21,6 +21,8 @@ services:
         condition: service_completed_successfully
       postgres:
         condition: service_healthy
+    env_file:
+      - ../.env
     ports:
       - "8000:8000"
     networks:
@@ -33,7 +35,7 @@ services:
       postgres:
         condition: service_healthy
     env_file:
-      - ./.env
+      - ../.env
     networks:
       - todolist
     command: python ./manage.py migrate
@@ -43,7 +45,7 @@ services:
     image: postgres:13.0-alpine
     restart: always
     env_file:
-      - ./.env
+      - ../.env
     volumes:
       - pg_data_todolist:/var/lib/postgresql/data
     healthcheck:
