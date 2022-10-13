@@ -21,9 +21,9 @@ services:
       migrations:
         condition: service_completed_successfully
     env_file:
-      - .env
+      - .env_ci
     volumes:
-      - ./.env:/code/.env
+      - ./.env_ci:/code/.env_ci
     networks:
         - todolist
 
@@ -33,7 +33,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./.env:/code/.env
+      - ./.env_ci:/code/.env_ci
     networks:
       - todolist
     command: python ./manage.py migrate
@@ -42,10 +42,8 @@ services:
   postgres:
     image: postgres:13.0-alpine
     restart: always
-    environment:
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+    env_file:
+      - .env_ci
     volumes:
       - pg_data_todolist:/var/lib/postgresql/data
     healthcheck:
