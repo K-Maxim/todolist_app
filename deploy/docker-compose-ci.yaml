@@ -23,7 +23,7 @@ services:
     env_file:
       - .env_ci
     volumes:
-      - ./.env_ci:/code/.env_ci
+      - ./.env_ci:/code/.env
     networks:
         - todolist
 
@@ -43,7 +43,7 @@ services:
     image: postgres:13.0-alpine
     restart: always
     env_file:
-      - .env_ci
+      - .env
     volumes:
       - pg_data_todolist:/var/lib/postgresql/data
     healthcheck:
