@@ -24,8 +24,6 @@ services:
       - .env
     volumes:
       - ./.env:/code/.env
-    ports:
-      - "8000:8000"
     networks:
         - todolist
 
@@ -44,8 +42,10 @@ services:
   postgres:
     image: postgres:13.0-alpine
     restart: always
-    env_file:
-      - .env
+    environment:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
     volumes:
       - pg_data_todolist:/var/lib/postgresql/data
     healthcheck:
