@@ -20,8 +20,8 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-    volumes:
-      - ./.env_example:/code/.env_example
+    env_file:
+      - ./deploy/.env_example
     networks:
         - todolist
 
