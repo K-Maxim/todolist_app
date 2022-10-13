@@ -21,7 +21,7 @@ services:
       migrations:
         condition: service_completed_successfully
     volumes:
-      - ./.env_ci:/code/.env
+      - ./.env:/code/.env_ci
     networks:
         - todolist
 
@@ -31,7 +31,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./.env_ci:/code/.env
+      - ./.env:/code/.env_ci
     networks:
       - todolist
     command: python ./manage.py migrate
