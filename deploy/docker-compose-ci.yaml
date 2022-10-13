@@ -20,6 +20,8 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
+    env_file:
+      - .env
     volumes:
       - ./.env:/code/.env
     networks:
