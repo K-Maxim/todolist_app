@@ -1,29 +1,34 @@
+from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated
 
 from core.models import User
 
 
-class UserRegistrationSerializer(serializers.ModelSerializer):
+class PasswordField(serializers.CharField):
 
-    id = serializers.IntegerField(required=False)
-    username = serializers.CharField(max_length=50)
-    first_name = serializers.CharField(max_length=50, allow_blank=True, required=False)
-    last_name = serializers.CharField(max_length=50, allow_blank=True, required=False)
-    email = serializers.EmailField(allow_blank=True, required=False)
-    password = serializers.CharField(max_length=50, required=True)
-    phone = serializers.CharField(max_length=15, required=False, allow_null=True)
+    def __init__(self, **kwargs):
+        kwargs['style'] = {'input_type': 'password'}
+        kwargs.setdefault('write_only', True)
+        super().__init__(**kwargs)
+        self.validators.append(validate_password)
 
-    def check_password(self, value):
-        validate_password(value)
-        return value
+
+class UserSignupSerializer(serializers.ModelSerializer):
+
+    password = PasswordField(required=True)
+    password_repeat = PasswordField(required=True)
 
     def valid_password(self, data):
-        if data.get('password') == data.get('password_repeat'):
-            return data
-        raise serializers.ValidationError('Пароли не совпадают')
+        if data['password'] != data['password_repeat']:
+            raise serializers.ValidationError('Пароли не совпадают')
+        return data
 
     def create(self, validated_data):
+        del validated_data['password_repeat']
         user = User.objects.create(**validated_data)
         user.set_password(user.password)
         user.save()
@@ -36,4 +41,50 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password', 'password_repeat')
+
+
+class UserLoginSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=True)
+    password = PasswordField(required=True)
+
+    def create(self, validated_data):
+        user = authenticate(
+            validated_data['username'],
+            validated_data['password']
+        )
+        if user is None:
+            raise AuthenticationFailed
+        return user
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    old_password = PasswordField(required=True)
+    new_password = PasswordField(required=True)
+
+    def create(self, validated_data: dict):
+        return NotImplementedError
+
+    def validate(self, data):
+        if not (user := data['user']):
+            raise NotAuthenticated
+        if not user.check_password(data['old_password']):
+            raise ValidationError
+        return data
+
+    def update(self, instance: User, validated_data: dict):
+        instance.password = make_password(validate_password('new_password'))
+        instance.save(update_fields=('password',))
+        return instance
