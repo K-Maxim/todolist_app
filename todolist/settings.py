@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'todolist.urls'
@@ -89,7 +90,7 @@ DATABASES = {
         'NAME': env("POSTGRES_DB"),
         'USER': env("POSTGRES_USER"),
         'PASSWORD': env("POSTGRES_PASSWORD"),
-        'HOST': '127.0.0.1',
+        'HOST': env("POSTGRES_HOST"),
         'PORT': '5432',
     }
 }
@@ -136,7 +137,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'core.User'
 
 #Auth VK
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
@@ -156,3 +156,4 @@ SOCIAL_AUTH_VK_EXTRA_DATA = [
     ('email', 'email'),
 ]
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/logged-in/'
+AUTH_USER_MODEL = 'core.User'
