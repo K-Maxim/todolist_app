@@ -58,4 +58,3 @@ volumes:
 networks:
   todolist:
     driver: bridge
-
