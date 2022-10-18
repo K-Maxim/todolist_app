@@ -48,5 +48,6 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd todolist
+            docker-compose down --rmi all --volumes
             docker system prune -a -f
             docker-compose up -d
