@@ -53,7 +53,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             password=validated_data['password']
         )
-        if user is None:
+        if not user:
             raise AuthenticationFailed
         return user
 
