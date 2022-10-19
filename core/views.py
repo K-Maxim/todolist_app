@@ -16,8 +16,11 @@ class UserSignupView(CreateAPIView):
 class UserLoginView(CreateAPIView):
     serializer_class = UserLoginSerializer
 
-    def perform_create(self, serializer):
-        login(request=self.request, user=serializer.save())
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        login(request=request, user=serializer.save())
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
