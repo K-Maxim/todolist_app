@@ -1,5 +1,6 @@
 from django.contrib.auth import login, logout
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -42,5 +43,16 @@ class UserUpdatePassword(UpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data['old_password']):
+                raise ValidationError
+            self.object.set_password(serializer.data['new_password'])
+            self.object.save(update_fields=('password',))
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
