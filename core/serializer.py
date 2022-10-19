@@ -69,6 +69,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     old_password = PasswordField(required=True)
     new_password = PasswordField(required=True)
 
