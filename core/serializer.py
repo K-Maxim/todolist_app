@@ -49,11 +49,10 @@ class UserLoginSerializer(serializers.ModelSerializer):
     password = PasswordField(required=True)
 
     def create(self, validated_data):
-        user = authenticate(
-            username=validated_data['username'],
-            password=validated_data['password']
-        )
-        if not user:
+        if not (user := authenticate(
+                username=validated_data['username'],
+                password=validated_data['password']
+        )):
             raise AuthenticationFailed
         return user
 
