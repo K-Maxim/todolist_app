@@ -50,8 +50,8 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = authenticate(
-            validated_data['username'],
-            validated_data['password']
+            username=validated_data['username'],
+            password=validated_data['password']
         )
         if user is None:
             raise AuthenticationFailed
