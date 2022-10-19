@@ -75,6 +75,14 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     def create(self, validated_data: dict):
         return NotImplementedError
 
-    def validate_new_password(self, value):
-        validate_password(value)
-        return value
+    def validate(self, data: dict):
+        if not (user := data['user']):
+            raise NotAuthenticated
+        if not user.check_password(data['old_password']):
+            raise ValidationError({'old_password': 'пароль некорректный'})
+        return data
+
+    def update(self, instance: User, validated_data: dict) -> User:
+        instance.password = make_password(validated_data['new_password'])
+        instance.save(update_fields=('password',))
+        return instance

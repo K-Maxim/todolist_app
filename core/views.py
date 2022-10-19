@@ -39,23 +39,10 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
 
 class UserUpdatePassword(UpdateAPIView):
     serializer_class = UserUpdateSerializer
-    model = User
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
 
-    def update(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        serializer = self.get_serializer(data=request.data)
-
-        if serializer.is_valid():
-            if not self.object.check_password(serializer.data.get('old_password')):
-                raise ValidationError
-            self.object.set_password(serializer.data.get('new_password'))
-            self.object.save(update_fields=('password',))
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
