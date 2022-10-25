@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from core.serializer import UserProfileSerializer
-from goals.models import GoalCategory, Goal
+from goals.models import GoalCategory, Goal, GoalComment
 
 
 class GoalCategoryCreateSerializer(serializers.ModelSerializer):
@@ -55,3 +55,19 @@ class GoalSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated", "user")
 
 
+class GoalCommentsCreateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = GoalComment
+        read_only_fields = ("id", "created", "updated", "user")
+        fields = "__all__"
+
+
+class GoalCommentsSerializer(serializers.ModelSerializer):
+    user = UserProfileSerializer(read_only=True)
+
+    class Meta:
+        model = GoalComment
+        read_only_fields = ("id", "created", "updated", "user", "goal")
+        fields = "__all__"

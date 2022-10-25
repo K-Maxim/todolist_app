@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+
+import django_filters.rest_framework
 import environ
 
 env = environ.Env(
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'social_django',
     'core',
     'goals',
@@ -158,3 +161,10 @@ SOCIAL_AUTH_VK_EXTRA_DATA = [
     ('email', 'email'),
 ]
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/logged-in/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_FILTER_BACKEND': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    )
+}
