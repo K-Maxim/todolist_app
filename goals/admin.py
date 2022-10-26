@@ -5,7 +5,7 @@ from goals.models import GoalCategory, Goal, GoalComment
 
 @admin.register(GoalCategory)
 class GoalCategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "user", "created", "updated")
+    list_display = ("id", "title", "user", "is_deleted")
     list_display_links = ("title", )
     search_fields = ("title", )
     list_filter = ("is_deleted", )
