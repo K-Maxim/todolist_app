@@ -13,7 +13,7 @@
 3. install dependencies from .env file:
 - install your variables or can copy the default variables from todolist/.env.example
 4. Launch docker for database:
-- docker-compose.dev.yaml up -d
+- docker-compose.yaml up -d
 5. roll up migrations:
 - python ./manage.py makemigraitons
 - python ./manage.py migrate
