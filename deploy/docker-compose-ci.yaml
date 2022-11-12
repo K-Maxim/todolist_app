@@ -20,9 +20,7 @@ services:
       postgres:
         condition: service_healthy
     env_file:
-      - ../.env
-    environment:
-      POSTGRES_HOST: postgres
+      - ./.env
     networks:
       - todolist
     command:

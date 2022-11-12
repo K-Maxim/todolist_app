@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 from django.core.management import BaseCommand
-from enum import IntEnum, auto
+from enum import auto, Enum
 
 from pydantic import BaseModel
 
@@ -26,9 +26,9 @@ class NewGoal(BaseModel):
         return None not in [self.cat_id, self.goal_title]
 
 
-class StateEnum(IntEnum):
-    CREATE_CATEGORY_SELECT = auto
-    CHOSEN_CATEGORY = auto
+class StateEnum(Enum):
+    CREATE_CATEGORY_SELECT = auto()
+    CHOSEN_CATEGORY = auto()
 
 
 class Command(BaseCommand):
@@ -102,7 +102,6 @@ class Command(BaseCommand):
             )
             self.tg_client.send_message(message.chat.id, '[New goal created]')
         else:
-            #TODO: Log
             self.tg_client.send_message(message.chat.id, '[something went mistake]')
         self.storage.reset(tg_user.chat_id)
 

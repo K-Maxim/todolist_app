@@ -26,8 +26,8 @@ services:
       POSTGRES_HOST: postgres
     networks:
       - todolist
-    command:
-      - python manage.py runbot
+    command: >
+      sh -c "python manage.py runbot"
 
 
   api:
