@@ -7,7 +7,7 @@ from bot.tg.fsm.base import Storage
 
 class StorageData(BaseModel):
     state: Enum | None = None
-    data: dict
+    data: dict = {}
 
 
 class MemoryStorage(Storage):
