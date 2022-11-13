@@ -12,31 +12,36 @@ from goals.filters import GoalDateFilter
 from goals.models import GoalCategory, Goal, GoalComment, Board
 from goals.permissions import BoardPermissions, GoalCategoryPermissions, GoalPermissions, CommentPermissions
 from goals.serializer import GoalCreateSerializer, GoalCategorySerializer, GoalCategoryCreateSerializer, GoalSerializer, \
-    GoalCommentsCreateSerializer, GoalCommentsSerializer, BoardCreateSerializer, BoardSerializer
+    GoalCommentsCreateSerializer, GoalCommentsSerializer, BoardCreateSerializer, BoardSerializer, BoardListSerializer
 
 
 class BoardCreateView(CreateAPIView):
+    """Создание доски"""
     permission_classes = [BoardPermissions]
     serializer_class = BoardCreateSerializer
 
 
 class BoardListView(ListAPIView):
+    """Список всех доск"""
     model = Board
     permission_classes = [BoardPermissions]
-    serializer_class = BoardSerializer
+    serializer_class = BoardListSerializer
     ordering = ['title']
 
     def get_queryset(self):
-        return Board.objects.filter(participants__user_id=self.request.user.id, is_deleted=False)
+        return Board.objects.prefetch_related('participants').filter(participants__user_id=self.request.user.id,
+                                                                     is_deleted=False)
 
 
 class BoardView(RetrieveUpdateDestroyAPIView):
+    """Одна доска (показ, обновление, удаление)"""
     model = Board
     permission_classes = [BoardPermissions]
     serializer_class = BoardSerializer
 
     def get_queryset(self):
-        return Board.objects.prefetch_related().filter(participants__user_id=self.request.user.id, is_deleted=False)
+        return Board.objects.prefetch_related('participants').filter(participants__user_id=self.request.user.id,
+                                                                     is_deleted=False)
 
     def perform_destroy(self, instance):
         with transaction.atomic():
@@ -50,11 +55,13 @@ class BoardView(RetrieveUpdateDestroyAPIView):
 
 
 class GoalCategoryCreateView(CreateAPIView):
+    """Создание категории"""
     permission_classes = [IsAuthenticated]
     serializer_class = GoalCategoryCreateSerializer
 
 
 class GoalCategoryListView(ListAPIView):
+    """Список всех категорий"""
     model = GoalCategory
     permission_classes = [GoalCategoryPermissions]
     serializer_class = GoalCategorySerializer
@@ -77,6 +84,7 @@ class GoalCategoryListView(ListAPIView):
 
 
 class GoalCategoryView(RetrieveUpdateDestroyAPIView):
+    """Одна категория (показ, обновление, удаление)"""
     model = GoalCategory
     serializer_class = GoalCategorySerializer
     permission_classes = [GoalCategoryPermissions, BoardPermissions]
@@ -98,11 +106,13 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
 
 
 class GoalCreateView(CreateAPIView):
+    """Создание цели"""
     permission_classes = [GoalPermissions]
     serializer_class = GoalCreateSerializer
 
 
 class GoalListView(ListAPIView):
+    """Список всех целей"""
     model = Goal
     permission_classes = [IsAuthenticated]
     serializer_class = GoalSerializer
@@ -124,6 +134,7 @@ class GoalListView(ListAPIView):
 
 
 class GoalView(RetrieveUpdateDestroyAPIView):
+    """Одна категория (показ, обновление, удаление)"""
     model = Goal
     serializer_class = GoalSerializer
     permission_classes = [GoalPermissions, BoardPermissions]
@@ -143,11 +154,13 @@ class GoalView(RetrieveUpdateDestroyAPIView):
 
 
 class GoalCommentCreateView(CreateAPIView):
+    """Добавление комментария"""
     serializer_class = GoalCommentsCreateSerializer
     permission_classes = [CommentPermissions]
 
 
 class GoalCommentListView(ListAPIView):
+    """Список всех комментариев"""
     model = GoalComment
     permission_classes = [CommentPermissions]
     serializer_class = GoalCommentsSerializer
@@ -165,6 +178,7 @@ class GoalCommentListView(ListAPIView):
 
 
 class GoalCommentView(RetrieveUpdateDestroyAPIView):
+    """Один комментарий (показ, обновление, удаление)"""
     model = GoalComment
     permission_classes = [CommentPermissions]
     serializer_class = GoalCommentsSerializer

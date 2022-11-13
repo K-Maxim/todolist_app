@@ -39,9 +39,11 @@ class Command(BaseCommand):
 
     @staticmethod
     def _generate_verification_code():
+        """Генерация верификационного кода для связки с телеграмм"""
         return os.urandom(12).hex()
 
     def handle_unverified_user(self, massage: Message, tg_user: TgUser):
+        """Выдача кода для связки"""
         code: str = self._generate_verification_code()
         tg_user.verification_code = code
         tg_user.save(update_fields=('verification_code',))
@@ -51,6 +53,7 @@ class Command(BaseCommand):
         )
 
     def handle_goals_list(self, message: Message, tg_user: TgUser):
+        """Выдача списка целей"""
         response_goals: list[str] = [
             f"#{goal.id} {goal.title}"
             for goal in Goal.objects.filter(user_id=tg_user.user.id).order_by('created')
@@ -61,6 +64,7 @@ class Command(BaseCommand):
             self.tg_client.send_message(message.chat.id, "[you have no goals]")
 
     def handle_goals_categories_list(self, message: Message, tg_user: TgUser):
+        """Выдача списка категорий"""
         response_categories: list[str] = [
             f"#{cat.id} {cat.title}"
             for cat in GoalCategory.objects.filter(
@@ -74,6 +78,7 @@ class Command(BaseCommand):
             self.tg_client.send_message(message.chat.id, "[you have no categories]")
 
     def handle_save_selected_category(self, massage: Message, tg_user: TgUser):
+        """Сохранение выбранной категории"""
         if massage.text.isdigit():
             cat_id = int(massage.text)
             if GoalCategory.objects.filter(
@@ -91,6 +96,7 @@ class Command(BaseCommand):
             self.tg_client.send_message(massage.chat.id, '[Invalid category id]')
 
     def handle_save_new_cat(self, message: Message, tg_user: TgUser):
+        """Сохранение новой категории"""
         goal = NewGoal(**self.storage.get_data(tg_user.chat_id))
         goal.goal_title = message.text
         if goal.is_completed:
@@ -106,6 +112,7 @@ class Command(BaseCommand):
         self.storage.reset(tg_user.chat_id)
 
     def handle_verified_user(self, massage: Message, tg_user: TgUser):
+        """Общение с ботом"""
         if massage.text == '/goals':
             self.handle_goals_list(massage, tg_user)
 
@@ -131,6 +138,7 @@ class Command(BaseCommand):
             self.tg_client.send_message(massage.chat.id, '[unknown command]')
 
     def handle_massage(self, message: Message):
+        """Обработка сообщения"""
         tg_user, _ = TgUser.objects.select_related('user').get_or_create(
             chat_id=message.chat.id,
             defaults={

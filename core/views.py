@@ -11,10 +11,12 @@ from core.serializer import UserSignupSerializer, UserLoginSerializer, UserProfi
 
 
 class UserSignupView(CreateAPIView):
+    """Создание пользователя"""
     serializer_class = UserSignupSerializer
 
 
 class UserLoginView(CreateAPIView):
+    """Авторизация пользователя"""
     serializer_class = UserLoginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -26,6 +28,7 @@ class UserLoginView(CreateAPIView):
 
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
+    """Просмотр, обновление, удаление пользователя"""
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
@@ -39,6 +42,7 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
 
 
 class UserUpdatePassword(UpdateAPIView):
+    """Изменение пароля"""
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated]
 

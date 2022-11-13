@@ -9,7 +9,7 @@ from core.models import User
 
 
 class PasswordField(serializers.CharField):
-
+    """Валидация пароля"""
     def __init__(self, **kwargs):
         kwargs['style'] = {'input_type': 'password'}
         kwargs.setdefault('write_only', True)
@@ -18,7 +18,7 @@ class PasswordField(serializers.CharField):
 
 
 class UserSignupSerializer(serializers.ModelSerializer):
-
+    """Создание пользователя"""
     password = PasswordField(required=True)
     password_repeat = PasswordField(required=True)
 
@@ -45,6 +45,7 @@ class UserSignupSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
+    """Аутентификация пользователя"""
     username = serializers.CharField(required=True)
     password = PasswordField(required=True)
 
@@ -62,13 +63,14 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-
+    """Профиль пользователя"""
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'email')
 
 
 class UserUpdateSerializer(serializers.Serializer):
+    """Смена пароля"""
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     old_password = PasswordField(required=True)
     new_password = PasswordField(required=True)
