@@ -22,7 +22,7 @@ class UserLoginView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.data
         login(request=request, user=user)
-        return Response(UserProfileSerializer(user).data, status=status.HTTP_201_CREATED)
+        return Response(UserLoginSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
