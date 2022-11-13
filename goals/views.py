@@ -76,7 +76,7 @@ class GoalCategoryListView(ListAPIView):
     search_fields = ["title"]
 
     def get_queryset(self):
-        return GoalCategory.objects.select_related('board__participants').filter(
+        return GoalCategory.objects.prefetch_related('board__participants').filter(
             board__participants__user_id=self.request.user,
             user=self.request.user,
             is_deleted=False,
@@ -129,7 +129,6 @@ class GoalListView(ListAPIView):
     def get_queryset(self):
         return Goal.objects.select_related('user', 'category__board').filter(
             Q(category__board__participants__user_id=self.request.user.id) & ~Q(status=Goal.Status.archived),
-            user=self.request.user, is_deleted=False
         )
 
 
@@ -142,7 +141,6 @@ class GoalView(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Goal.objects.select_related('user', 'category__board').filter(
             Q(category__board__participants__user_id=self.request.user.id) & ~Q(status=Goal.Status.archived),
-            user=self.request.user, is_deleted=False
         )
 
     def perform_destroy(self, instance: Goal):

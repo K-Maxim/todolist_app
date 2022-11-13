@@ -14,13 +14,13 @@ class VerificationView(GenericAPIView):
     serializer_class = TgUserSerializer
 
     def patch(self, request, *args, **kwargs):
-        serializer: TgUserSerializer = self.get_serializer(request.data)
+        serializer: TgUserSerializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         tg_user: TgUser = serializer.validated_data['tg_user']
         tg_user.user = self.request.user
         tg_user.save(update_fields=('user', ))
 
-        instance_serilalizer: TgUserSerializer = self.get_serializer(tg_user)
-        TgClient(settings.BOT_TOKEN).send_message(tg_user.chat_id, "[Верификация завершена]")
-        return Response(instance_serilalizer.data)
+        instance_serializer: TgUserSerializer = self.get_serializer(tg_user)
+        TgClient(settings.BOT_TOKEN).send_message(tg_user.chat_id, '[verification_has_been_completed]')
+        return Response(instance_serializer.data)
