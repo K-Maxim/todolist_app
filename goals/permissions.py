@@ -5,6 +5,7 @@ from goals.models import BoardParticipant
 
 
 class BoardPermissions(permissions.BasePermission):
+    """Доступ к работе на доске (авторизованному владельцу)"""
     def has_object_permission(self, request, view, obj):
         if not request.user.is_authenticated:
             return False
@@ -18,6 +19,7 @@ class BoardPermissions(permissions.BasePermission):
 
 
 class GoalCategoryPermissions(IsAuthenticated):
+    """Доступ к работе на доске (авторизованному владельцу и редактору)"""
     def has_object_permission(self, request, view, obj):
         filters: dict = {'user': request.user, 'board': obj.board}
         if request.method not in permissions.SAFE_METHODS:
@@ -26,6 +28,7 @@ class GoalCategoryPermissions(IsAuthenticated):
 
 
 class GoalPermissions(IsAuthenticated):
+    """Доступ к работе с целями (авторизованному владельцу и редактору)"""
     def has_object_permission(self, request, view, obj):
         filters: dict = {'user': request.user, 'board': obj.category.board}
         if request.method not in permissions.SAFE_METHODS:
@@ -34,6 +37,6 @@ class GoalPermissions(IsAuthenticated):
 
 
 class CommentPermissions(IsAuthenticated):
-
+    """Доступ к комментариям"""
     def has_object_permission(self, request, view, obj):
         return request.method in permissions.SAFE_METHODS or obj.user_id == request.user.id
