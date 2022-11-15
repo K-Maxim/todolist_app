@@ -1,0 +1,83 @@
+import pytest
+
+from goals.serializer import BoardSerializer, BoardListSerializer
+from tests.factories import BoardFactory, BoardParticipantFactory
+
+# DONE!!!
+@pytest.mark.django_db
+def test_board_create(client, user_access, user):
+    """Создание доски"""
+    data = {
+        'title': 'title',
+        'user': user.id,
+    }
+
+    response = client.post(
+        path='/goals/board/create',
+        HTTP_AUTHORIZATION=user_access,
+        data=data,
+        content_type='application/json'
+    )
+
+    assert response.status_code == 201
+    assert response.data['title'] == data['title']
+
+
+# DONE!!!
+@pytest.mark.django_db
+def test_board_list(client, user_access, board_participant):
+    """Список досок"""
+
+    boards = [board_participant.board]
+    boards.extend(BoardFactory.create_batch(10))
+    for board in boards[1:]:
+        BoardParticipantFactory.create(user=board_participant.user, board=board)
+
+    response = client.get(
+        path='/goals/board/list',
+        HTTP_AUTHORIZATION=user_access
+    )
+
+    assert response.status_code == 200
+    assert response.data == BoardListSerializer(boards, many=True).data
+
+
+# DONE!!!
+@pytest.mark.django_db
+def test_board_retrieve(client, user_access, board, board_participant):
+    """Просмотр доски"""
+    response = client.get(
+        path=f'/goals/board/{board.id}',
+        HTTP_AUTHORIZATION=user_access
+    )
+
+    assert response.status_code == 200
+    assert response.data == BoardSerializer(board).data
+
+# DONE!!!
+@pytest.mark.django_db
+def test_board_update(client, user_access, board, board_participant):
+    """Редактирование доски"""
+    new_title = 'test_updated_title'
+
+    response = client.patch(
+        path=f'/goals/board/{board.id}',
+        data={'title': new_title, 'user': board_participant.id},
+        HTTP_AUTHORIZATION=user_access,
+        content_type='application/json'
+    )
+
+    assert response.status_code == 200
+    assert response.data.get('title') == new_title
+
+# DONE!!!
+@pytest.mark.django_db
+def test_board_delete(client, user_access, board, board_participant):
+    """Удаление доски"""
+    response = client.delete(
+        path=f'/goals/board/{board.id}',
+        HTTP_AUTHORIZATION=user_access,
+    )
+
+    assert response.status_code == 204
+    assert response.data is None
