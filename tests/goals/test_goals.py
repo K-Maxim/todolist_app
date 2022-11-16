@@ -5,12 +5,12 @@ from tests.factories import GoalFactory
 
 
 @pytest.mark.django_db
-def test_goal_create(client, user_access, user, goal_category):
+def test_goal_create(client, user_access, user, goal_category, board_participant):
     """Создание цели"""
     data = {
         'title': 'test_category',
         'description': 'description',
-        'user': 1,
+        'user': user.username,
         'category': goal_category.id,
         'status': 2,
         'priority': 3,
@@ -18,9 +18,9 @@ def test_goal_create(client, user_access, user, goal_category):
 
     response = client.post(
         path='/goals/goal/create',
-        HTTP_AUTHORIZATION=user_access,
-        data=data,
 
+        data=data,
+        HTTP_AUTHORIZATION=user_access,
         content_type='application/json'
     )
 

@@ -71,3 +71,18 @@ def test_user_profile(client, user_access, user):
 
     assert response.status_code == 200
     assert response.data == UserProfileSerializer(user).data
+
+
+@pytest.mark.django_db
+def test_update_password(client, user_access):
+    response = client.put(
+        path='/core/update_password',
+        HTTP_AUTHORIZATION=user_access,
+        data={
+            'old_password': 'test_password',
+            'new_password': 'dj%#!dfsd%$w923',
+        },
+        content_type='application/json'
+    )
+
+    assert response.status_code == 200
