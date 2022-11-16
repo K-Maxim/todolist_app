@@ -3,7 +3,7 @@ import pytest
 from goals.serializer import BoardSerializer, BoardListSerializer
 from tests.factories import BoardFactory, BoardParticipantFactory
 
-# DONE!!!
+
 @pytest.mark.django_db
 def test_board_create(client, user_access, user):
     """Создание доски"""
@@ -23,7 +23,7 @@ def test_board_create(client, user_access, user):
     assert response.data['title'] == data['title']
 
 
-# DONE!!!
+
 @pytest.mark.django_db
 def test_board_list(client, user_access, board_participant):
     """Список досок"""
@@ -42,7 +42,6 @@ def test_board_list(client, user_access, board_participant):
     assert response.data == BoardListSerializer(boards, many=True).data
 
 
-# DONE!!!
 @pytest.mark.django_db
 def test_board_retrieve(client, user_access, board, board_participant):
     """Просмотр доски"""
@@ -54,7 +53,7 @@ def test_board_retrieve(client, user_access, board, board_participant):
     assert response.status_code == 200
     assert response.data == BoardSerializer(board).data
 
-# DONE!!!
+
 @pytest.mark.django_db
 def test_board_update(client, user_access, board, board_participant):
     """Редактирование доски"""
@@ -70,7 +69,7 @@ def test_board_update(client, user_access, board, board_participant):
     assert response.status_code == 200
     assert response.data.get('title') == new_title
 
-# DONE!!!
+
 @pytest.mark.django_db
 def test_board_delete(client, user_access, board, board_participant):
     """Удаление доски"""

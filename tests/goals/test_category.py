@@ -1,20 +1,17 @@
 import pytest
 
-from goals.serializer import GoalCategorySerializer, GoalCategoryCreateSerializer
-from tests.factories import GoalCategoryFactory, BoardParticipantFactory
+from goals.serializer import GoalCategorySerializer
+from tests.factories import GoalCategoryFactory
 
 
 @pytest.mark.django_db
-def test_category_create(client, user_access, user, board):
+def test_category_create(client, user_access, user, board, board_participant):
     """Создание категории"""
-    data = GoalCategoryFactory.create_batch(1)
-    data = data[0]
-    user = BoardParticipantFactory.role
 
     data = {
-        'title': data.board.title,
-        'user': user,
-        'board': data.board.id,
+        'title': board.title,
+        'user': user.id,
+        'board': board.id,
     }
 
     response = client.post(
@@ -24,12 +21,11 @@ def test_category_create(client, user_access, user, board):
         content_type='application/json',
     )
 
-    assert response.data == data
     assert response.status_code == 201
+    assert response.data['title'] == data['title']
+    assert response.data['board'] == data['board']
 
 
-
-# DONE!!!
 @pytest.mark.django_db
 def test_category_list(client, user_access, board_participant):
     """Список категорий"""
@@ -44,7 +40,6 @@ def test_category_list(client, user_access, board_participant):
     assert response.data == GoalCategorySerializer(categories, many=True).data
 
 
-# DONE!!!
 @pytest.mark.django_db
 def test_category_retrieve(client, user_access, goal_category, board_participant):
     """Просмотр категории"""
@@ -58,7 +53,6 @@ def test_category_retrieve(client, user_access, goal_category, board_participant
     assert response.data == GoalCategorySerializer(goal_category).data
 
 
-# DONE!!!
 @pytest.mark.django_db
 def test_category_update(client, user_access, goal_category, board_participant):
     """Обновление категории"""
@@ -75,7 +69,6 @@ def test_category_update(client, user_access, goal_category, board_participant):
     assert response.data.get('title') == new_title
 
 
-# DONE!!!
 @pytest.mark.django_db
 def test_category_delete(client, user_access, goal_category, board_participant):
     """Удаление категории"""

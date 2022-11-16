@@ -79,7 +79,7 @@ class UserUpdateSerializer(serializers.Serializer):
         return NotImplementedError
 
     def validate(self, data: dict):
-        if not (user := data['user']):
+        if not (user := data.get('user')):
             raise NotAuthenticated
         if not user.check_password(data['old_password']):
             raise ValidationError({'old_password': 'пароль некорректный'})

@@ -3,7 +3,7 @@ import pytest
 from goals.serializer import GoalCommentsSerializer
 from tests.factories import GoalCommentFactory
 
-# DONE!!!
+
 @pytest.mark.django_db
 def test_comment_create(client, user_access, goal, board_participant):
     """Создание комментария"""
@@ -23,7 +23,7 @@ def test_comment_create(client, user_access, goal, board_participant):
     assert response.data['text'] == data['text']
     assert response.data['goal'] == data['goal']
 
-# DONE!!!
+
 @pytest.mark.django_db
 def test_comment_list(client, user_access, goal, board_participant):
     """Список комментариев"""
@@ -38,7 +38,7 @@ def test_comment_list(client, user_access, goal, board_participant):
     assert response.status_code == 200
     assert response.data == GoalCommentsSerializer(comments, many=True).data
 
-# DONE!!!
+
 @pytest.mark.django_db
 def test_comment_retrieve(client, user_access, goal_comment, board_participant):
     """Просмотр комментария"""
@@ -50,7 +50,7 @@ def test_comment_retrieve(client, user_access, goal_comment, board_participant):
     assert response.status_code == 200
     assert response.data == GoalCommentsSerializer(goal_comment).data
 
-# DONE!!!
+
 @pytest.mark.django_db
 def test_comment_update(client, user_access, goal_comment, board_participant):
     """Обновление комментария"""
@@ -66,7 +66,7 @@ def test_comment_update(client, user_access, goal_comment, board_participant):
     assert response.status_code == 200
     assert response.data.get('text') == new_text
 
-# DONE!!!
+
 @pytest.mark.django_db
 def test_comment_delete(client, user_access, goal_comment, board_participant):
     """Удаление комментария"""
