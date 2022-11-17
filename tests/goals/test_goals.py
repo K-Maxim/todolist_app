@@ -32,6 +32,27 @@ def test_goal_create(client, user_access, user, goal_category, board_participant
     assert response.data['priority'] == data['priority']
 
 
+@pytest.mark.django_db
+def test_permission_goal_create(client, user_access, user, goal_category):
+    """Создание цели"""
+    data = {
+        'title': 'test_category',
+        'description': 'description',
+        'user': user.username,
+        'category': goal_category.id,
+        'status': 2,
+        'priority': 3,
+    }
+
+    response = client.post(
+        path='/goals/goal/create',
+        data=data,
+        HTTP_AUTHORIZATION=user_access,
+        content_type='application/json'
+    )
+
+    assert response.status_code == 403
+
 
 @pytest.mark.django_db
 def test_goal_list(client, user_access, board_participant, goal_category):

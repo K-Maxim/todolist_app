@@ -1,10 +1,9 @@
 from rest_framework import permissions
-from rest_framework.permissions import IsAuthenticated
 
 from goals.models import BoardParticipant, GoalCategory, Board, Goal
 
 
-class BoardPermissions(permissions.BasePermission):
+class BoardPermissions(permissions.IsAuthenticated):
     """Доступ к работе на доске (авторизованному владельцу)"""
     def has_object_permission(self, request, view, obj: Board):
         filters: dict = {'user': request.user, 'board': obj}
@@ -13,7 +12,7 @@ class BoardPermissions(permissions.BasePermission):
         return BoardParticipant.objects.filter(**filters).exists()
 
 
-class GoalCategoryPermissions(IsAuthenticated):
+class GoalCategoryPermissions(permissions.IsAuthenticated):
     """Доступ к работе с категориями (авторизованному владельцу и редактору)"""
     def has_object_permission(self, request, view, obj: GoalCategory):
         filters: dict = {'user': request.user, 'board': obj.board}
@@ -22,9 +21,9 @@ class GoalCategoryPermissions(IsAuthenticated):
         return BoardParticipant.objects.filter(**filters).exists()
 
 
-class GoalPermissions(IsAuthenticated):
+class GoalPermissions(permissions.IsAuthenticated):
     """Доступ к работе с целями (авторизованному владельцу и редактору)"""
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, obj: Goal):
         if request.method in permissions.SAFE_METHODS:
             return BoardParticipant.objects.filter(
                 user=request.user, board=obj.category.board
@@ -35,7 +34,7 @@ class GoalPermissions(IsAuthenticated):
         ).exists()
 
 
-class CommentPermissions(IsAuthenticated):
+class CommentPermissions(permissions.IsAuthenticated):
     """Доступ к комментариям"""
     def has_object_permission(self, request, view, obj):
         return request.method in permissions.SAFE_METHODS or obj.user_id == request.user.id

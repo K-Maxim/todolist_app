@@ -169,9 +169,9 @@ class BoardSerializer(serializers.ModelSerializer):
                     BoardParticipant.objects.create(
                         board=instance, user=new_part["user"], role=new_part["role"]
                     )
-
-        instance.title = validated_data['title']
-        instance.save()
+                if title := validated_data["title"]:
+                    instance.title = title
+                    instance.save()
 
         return instance
 

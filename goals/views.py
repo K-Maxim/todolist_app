@@ -26,7 +26,7 @@ class BoardListView(ListAPIView):
     model = Board
     permission_classes = [BoardPermissions]
     serializer_class = BoardListSerializer
-    ordering = ['title', ]
+    ordering = ['title']
 
     def get_queryset(self):
         return Board.objects.prefetch_related('participants').filter(participants__user_id=self.request.user.id,
@@ -106,7 +106,7 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
 class GoalCreateView(CreateAPIView):
     """Создание цели"""
     model = GoalCategory
-    permission_classes = [IsAuthenticated, GoalPermissions]
+    permission_classes = [GoalPermissions]
     serializer_class = GoalCreateSerializer
 
 
