@@ -23,7 +23,6 @@ def test_board_create(client, user_access, user):
     assert response.data['title'] == data['title']
 
 
-
 @pytest.mark.django_db
 def test_board_list(client, user_access, board_participant):
     """Список досок"""
@@ -32,6 +31,7 @@ def test_board_list(client, user_access, board_participant):
     boards.extend(BoardFactory.create_batch(10))
     for board in boards[1:]:
         BoardParticipantFactory.create(user=board_participant.user, board=board)
+    sorted(boards, key=lambda x: x.title)
 
     response = client.get(
         path='/goals/board/list',

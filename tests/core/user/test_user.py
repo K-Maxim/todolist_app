@@ -1,6 +1,7 @@
 import pytest
 
 from core.serializer import UserProfileSerializer
+from tests.factories import UserFactory
 
 
 @pytest.mark.django_db
@@ -86,3 +87,41 @@ def test_update_password(client, user_access):
     )
 
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_duplicate_name(client):
+    user = UserFactory.create_batch(1, username='test_username')
+    data = {
+        'username': 'test_username',
+        'password': 'zaqwsxcde159753',
+        'password_repeat': 'zaqwsxcde159753'
+    }
+
+    response = client.post(
+        path='/core/signup',
+        data=data,
+        content_type='application/json'
+    )
+
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_no_user_data(client):
+    data = {
+        'username': '',
+        'first_name': '',
+        'last_name': '',
+        'email': '',
+        'password': '',
+        'password_repeat': ''
+    }
+
+    response = client.post(
+        path='/core/signup',
+        data=data,
+        content_type='application/json'
+    )
+
+    assert response.status_code == 400
